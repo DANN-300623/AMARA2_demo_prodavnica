@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porudžbina primljena — AMARA</title>
+<link rel="stylesheet" href="stil.css">
+<style>
+  .success-page{ padding: 100px 20px; text-align: center; max-width: 520px; margin: 0 auto; }
+  .success-page .mark{
+    width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 26px; font-size: 24px;
+  }
+  .success-page h1{ font-family: 'Italiana', serif; font-size: 32px; margin: 0 0 14px; }
+  .success-page p{ color: var(--ink-soft); line-height: 1.6; margin-bottom: 30px; }
+  .order-number{ font-weight: 600; color: var(--ink); }
+  .back-link{
+    display: inline-block; border: 1px solid var(--ink); padding: 12px 26px; border-radius: 30px; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
+    <div></div>
+    <div></div>
+  </div>
+</header>
+
+<div class="success-page">
+  <div class="mark">✓</div>
+  <h1>Hvala Vam na porudžbini.</h1>
+  <p id="orderText">Poslali smo Vam potvrdu na email. Javljamo se u roku od 24h da potvrdimo dostupnost i dogovorimo dalje korake.</p>
+  <a href="index.html" class="back-link">Nazad u prodavnicu</a>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const broj = params.get('broj');
+  if (broj) {
+    document.getElementById('orderText').innerHTML =
+      'Broj porudžbine: <span class="order-number">' + broj + '</span>.<br><br>Poslali smo Vam potvrdu na email. Javljamo se u roku od 24h da potvrdimo dostupnost i dogovorimo dalje korake.';
+  }
+</script>
+</body>
+</html>

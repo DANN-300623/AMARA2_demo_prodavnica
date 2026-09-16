@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — AMARA</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+
+<div class="admin-shell">
+  <nav class="admin-nav">
+    <div class="admin-nav__logo">AMARA<span>.</span> admin</div>
+    <a href="#" class="tab-link active" data-tab="statistika">Statistika</a>
+    <a href="#" class="tab-link" data-tab="porudzbine">Porudžbine</a>
+    <a href="#" class="tab-link" data-tab="proizvodi">Proizvodi</a>
+    <a href="#" class="tab-link" data-tab="inventar">Zalihe</a>
+    <a href="#" class="tab-link" data-tab="podesavanja">Radno vreme</a>
+    <a href="#" id="logoutBtn" style="margin-top:24px;">Odjavi se</a>
+  </nav>
+
+  <main class="admin-main">
+
+    <section id="tab-statistika">
+      <h1>Statistika</h1>
+      <p class="subtitle">Pregled prometa i najprodavanijih proizvoda.</p>
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="card">
+        <h3>Promet po mesecu</h3>
+        <canvas id="prometChart" height="90"></canvas>
+      </div>
+      <div class="card">
+        <h3>Najprodavaniji proizvodi</h3>
+        <canvas id="topProizvodiChart" height="90"></canvas>
+        <table id="topProizvodiTable" style="margin-top:18px;"><tbody></tbody></table>
+      </div>
+      <div class="card" id="upozorenjaCard" style="display:none;">
+        <h3>Upozorenja — nema na stanju</h3>
+        <ul class="warning-list" id="upozorenjaList"></ul>
+      </div>
+    </section>
+
+    <section id="tab-porudzbine" style="display:none;">
+      <h1>Porudžbine</h1>
+      <p class="subtitle">Sve pristigle porudžbine, najnovije prve.</p>
+      <div class="card">
+        <table>
+          <thead><tr><th>Broj</th><th>Kupac</th><th>Stavke</th><th>Ukupno</th><th>Status</th><th></th></tr></thead>
+          <tbody id="porudzbineTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-proizvodi" style="display:none;">
+      <h1>Proizvodi</h1>
+      <p class="subtitle">Dodajte nove proizvode ili izmenite postojeće, uključujući fotografije.</p>
+
+      <div class="card" id="proizvodFormCard">
+        <h3 id="proizvodFormNaslov">Dodaj novi proizvod</h3>
+        <input type="hidden" id="pId">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div>
+            <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Naziv</label>
+            <input type="text" id="pNaziv" class="wide">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Cena (RSD)</label>
+            <input type="number" id="pCena" class="wide">
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Opis</label>
+          <textarea id="pOpis" class="wide" rows="2" style="background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:8px 10px;font-family:inherit;font-size:13.5px;"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div>
+            <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Pol</label>
+            <select id="pPol" class="wide">
+              <option value="zensko">Žensko</option>
+              <option value="musko">Muško</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Kategorija</label>
+            <select id="pKategorija" class="wide"></select>
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Boje (izaberi jednu ili više)</label>
+          <div id="pBoje"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+          <div>
+            <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Fotografija 1</label>
+            <input type="file" id="pFoto1" accept="image/*" class="wide">
+            <img id="pFoto1Preview" style="max-width:100px;margin-top:8px;display:none;border-radius:4px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;">Fotografija 2</label>
+            <input type="file" id="pFoto2" accept="image/*" class="wide">
+            <img id="pFoto2Preview" style="max-width:100px;margin-top:8px;display:none;border-radius:4px;">
+          </div>
+        </div>
+        <button class="btn" id="sacuvajProizvodBtn">Sačuvaj proizvod</button>
+        <button class="btn secondary" id="otkaziIzmenuBtn" style="display:none;">Otkaži izmenu</button>
+        <p class="login-error" id="proizvodGreska"></p>
+        <p class="login-error" id="proizvodUspeh" style="color:var(--ok);">Sačuvano.</p>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="proizvodiPretraga" placeholder="Pretraži proizvod...">
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Foto</th><th>Naziv</th><th>Kategorija</th><th>Cena</th><th></th></tr></thead>
+          <tbody id="proizvodiTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-inventar" style="display:none;">
+      <h1>Zalihe</h1>
+      <p class="subtitle">Unesite zalihu po veličini za svaki proizvod.</p>
+      <div class="filter-bar">
+        <input type="text" id="inventarPretraga" placeholder="Pretraži proizvod...">
+        <select id="inventarKategorijaFilter">
+          <option value="sve">Sve kategorije</option>
+        </select>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Proizvod</th><th>Veličina</th><th>Zaliha</th><th>Prodato</th><th>Preostalo</th><th></th></tr></thead>
+          <tbody id="inventarTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-podesavanja" style="display:none;">
+      <h1>Radno vreme</h1>
+      <p class="subtitle">Ovo se prikazuje kupcima na sajtu (informativno, ne utiče na porudžbine).</p>
+      <div class="card" style="max-width:420px;">
+        <label style="display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;">Radno vreme</label>
+        <input type="text" id="radnoVremeInput" class="wide" placeholder="npr. Pon-Pet 09-18h" style="margin-bottom:16px;">
+        <label style="display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;">Radni dani</label>
+        <input type="text" id="radniDaniInput" class="wide" placeholder="npr. Ponedeljak - Subota" style="margin-bottom:20px;">
+        <button class="btn" id="sacuvajPodesavanjaBtn">Sačuvaj</button>
+        <p class="login-error" id="podesavanjaSuccess" style="color:var(--ok);">Sačuvano.</p>
+      </div>
+
+      <div class="card" style="max-width:420px;">
+        <h3>Promena lozinke</h3>
+        <label style="display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;">Trenutna lozinka</label>
+        <input type="password" id="staraLozinkaInput" class="wide" style="margin-bottom:16px;">
+        <label style="display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;">Nova lozinka</label>
+        <input type="password" id="novaLozinkaInput" class="wide" style="margin-bottom:16px;">
+        <label style="display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;">Potvrdi novu lozinku</label>
+        <input type="password" id="potvrdiLozinkaInput" class="wide" style="margin-bottom:20px;">
+        <button class="btn" id="promeniLozinkuBtn">Promeni lozinku</button>
+        <p class="login-error" id="lozinkaGreska">Greška.</p>
+        <p class="login-error" id="lozinkaUspeh" style="color:var(--ok);">Lozinka promenjena.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="../frontend/podaci.js"></script>
+<script src="../frontend/prodavnica-api.js"></script>
+<script src="adminApi.js"></script>
+<script>
+zahtevajPrijavu();
+
+document.getElementById('logoutBtn').addEventListener('click', function(){
+  sessionStorage.removeItem('amara_admin_lozinka');
+  window.location.href = 'login.html';
+});
+
+// ---------- TAB PREBACIVANJE ----------
+document.querySelectorAll('.tab-link').forEach(function(link){
+  link.addEventListener('click', function(e){
+    e.preventDefault();
+    document.querySelectorAll('.tab-link').forEach(function(l){ l.classList.remove('active'); });
+    link.classList.add('active');
+    document.querySelectorAll('main > section').forEach(function(s){ s.style.display = 'none'; });
+    document.getElementById('tab-' + link.dataset.tab).style.display = 'block';
+  });
+});
+
+function formatCena(broj){ return Number(broj).toLocaleString('sr-RS') + ' RSD'; }
+function nazivProizvoda(id){
+  const p = PRODAVNICA_DATA.proizvodi.find(function(pr){ return pr.id == id; });
+  return p ? p.naziv : ('Proizvod #' + id);
+}
+
+// ---------- STATISTIKA ----------
+let prometChartInstanca = null;
+let topProizvodiChartInstanca = null;
+
+function renderStatistiku(res){
+  document.getElementById('statGrid').innerHTML =
+    '<div class="stat-card"><div class="num mono">' + res.ukupnoPorudzbina + '</div><div class="label">Ukupno porudžbina</div></div>' +
+    '<div class="stat-card"><div class="num mono">' + formatCena(res.ukupanPromet) + '</div><div class="label">Ukupan promet</div></div>' +
+    '<div class="stat-card' + (res.brojProizvodaBezStanja > 0 ? ' warn' : '') + '"><div class="num mono">' + res.brojProizvodaBezStanja + '</div><div class="label">Proizvoda bez stanja</div></div>';
+
+  const tbody = document.querySelector('#topProizvodiTable tbody');
+  tbody.innerHTML = res.najprodavaniji.map(function(p){
+    return '<tr><td>' + p.naziv + '</td><td>' + p.kolicina + ' prodato</td></tr>';
+  }).join('') || '<tr><td colspan="2" style="color:var(--ink-soft);">Još nema podataka.</td></tr>';
+
+  document.getElementById('upozorenjaCard').style.display = res.brojProizvodaBezStanja > 0 ? 'block' : 'none';
+  if (res.brojProizvodaBezStanja > 0) {
+    document.getElementById('upozorenjaList').innerHTML = res.idsProizvodaBezStanja.map(function(id){
+      return '<li>' + nazivProizvoda(id) + ' — nema nijedne dostupne veličine</li>';
+    }).join('');
+  }
+
+  // --- GRAFIKON: promet po mesecu ---
+  const meseci = Object.keys(res.prometPoMesecu).sort(); // "2026-08", "2026-09"... hronoloski
+  const prometVrednosti = meseci.map(function(m){ return res.prometPoMesecu[m]; });
+  const mesecLabele = meseci.map(function(m){
+    const [god, mes] = m.split('-');
+    const nazivi = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'];
+    return nazivi[parseInt(mes, 10) - 1] + ' ' + god.slice(2);
+  });
+
+  if (prometChartInstanca) prometChartInstanca.destroy();
+  prometChartInstanca = new Chart(document.getElementById('prometChart'), {
+    type: 'line',
+    data: {
+      labels: mesecLabele,
+      datasets: [{
+        label: 'Promet (RSD)',
+        data: prometVrednosti,
+        borderColor: '#6B2737',
+        backgroundColor: 'rgba(107,39,55,0.15)',
+        tension: 0.3,
+        fill: true,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: '#F2F0EB', opacity: 0.7 }, grid: { color: 'rgba(242,240,235,0.08)' } },
+        x: { ticks: { color: '#F2F0EB', opacity: 0.7 }, grid: { display: false } },
+      },
+    },
+  });
+
+  // --- GRAFIKON: najprodavaniji proizvodi ---
+  if (topProizvodiChartInstanca) topProizvodiChartInstanca.destroy();
+  topProizvodiChartInstanca = new Chart(document.getElementById('topProizvodiChart'), {
+    type: 'bar',
+    data: {
+      labels: res.najprodavaniji.map(function(p){ return p.naziv; }),
+      datasets: [{
+        label: 'Prodato (kom)',
+        data: res.najprodavaniji.map(function(p){ return p.kolicina; }),
+        backgroundColor: '#6B2737',
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#F2F0EB', opacity: 0.7 }, grid: { color: 'rgba(242,240,235,0.08)' } },
+        y: { ticks: { color: '#F2F0EB', opacity: 0.7 }, grid: { display: false } },
+      },
+    },
+  });
+}
+
+// ---------- PORUDZBINE ----------
+let poslednjePorudzbine = [];
+
+function osveziSve(){
+  zahtev('getAdminDashboard').then(function(res){
+    if (!res.uspesno) return;
+    renderStatistiku(res.statistika);
+    poslednjePorudzbine = res.porudzbine;
+    renderPorudzbineTable();
+    poslednjiInventar = res.inventar;
+    renderInventarTable();
+    poslednjiProizvodi = res.proizvodi.map(function(p){
+      const kat = PRODAVNICA_DATA.kategorije.find(function(k){ return k.id === p.kategorija; });
+      p.kategorijaNaziv = kat ? kat.naziv : p.kategorija;
+      return p;
+    });
+    renderProizvodiTable();
+  });
+}
+
+function renderPorudzbineTable(){
+    const tbody = document.getElementById('porudzbineTable');
+    tbody.innerHTML = poslednjePorudzbine.map(function(p){
+      const stavkeTekst = p.stavke.map(function(s){
+        let stockCls = '';
+        let stockTxt = '';
+        if (s.trenutnoPreostalo !== null) {
+          stockCls = s.trenutnoPreostalo <= 0 ? 'zero' : (s.trenutnoPreostalo <= 3 ? 'low' : '');
+          stockTxt = ' <span class="stock-hint ' + stockCls + '">(preostalo: ' + s.trenutnoPreostalo + ')</span>';
+        }
+        return '<div class="order-stavka-row"><span>' + s.naziv + ' (' + s.boja + ', ' + s.velicina + ') x' + s.kolicina + '</span></div>' +
+               '<div style="margin-bottom:6px;">' + stockTxt + '</div>';
+      }).join('');
+
+      let dugmad = '';
+      if (p.status === 'NOVA') {
+        dugmad = '<button class="btn small potvrdi-btn" data-broj="' + p.brojPorudzbine + '">Potvrdi</button>' +
+                 '<button class="btn small secondary izmeni-porudzbinu-btn" data-broj="' + p.brojPorudzbine + '">Izmeni</button>';
+      } else if (p.status === 'POTVRDJENA') {
+        dugmad = '<button class="btn small poslato-btn" data-broj="' + p.brojPorudzbine + '">Poslato</button>' +
+                 '<button class="btn small secondary izmeni-porudzbinu-btn" data-broj="' + p.brojPorudzbine + '">Izmeni</button>';
+      } else if (p.status === 'POSLATA') {
+        const datum = p.datumSlanja ? new Date(p.datumSlanja).toLocaleDateString('sr-RS') : '';
+        dugmad = '<span style="color:var(--ink-soft);font-size:12px;">Poslato ' + datum + '</span>';
+      } else {
+        dugmad = '<span style="color:var(--ink-soft);font-size:12px;">Otkazana</span>';
+      }
+
+      return '<tr>' +
+        '<td class="mono">' + p.brojPorudzbine + '<br><span style="color:var(--ink-soft);font-size:12px;">' + p.ime + ' · ' + p.telefon + '</span></td>' +
+        '<td>' + p.grad + '</td>' +
+        '<td class="order-items">' + stavkeTekst + '</td>' +
+        '<td>' + formatCena(p.ukupno) + '</td>' +
+        '<td><span class="badge ' + p.status + '">' + p.status + '</span></td>' +
+        '<td>' + dugmad + '</td>' +
+      '</tr>';
+    }).join('') || '<tr><td colspan="6" style="color:var(--ink-soft);">Još nema porudžbina.</td></tr>';
+
+    document.querySelectorAll('.potvrdi-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        if (!confirm('Da li ste FIZIČKI proverili da roba ima na stanju pre potvrde?')) return;
+        btn.disabled = true; btn.textContent = '...';
+        zahtev('updateOrderStatus', { brojPorudzbine: btn.dataset.broj, noviStatus: 'POTVRDJENA' }).then(function(res){
+          if (!res.uspesno) alert(res.poruka);
+          osveziSve();
+        });
+      });
+    });
+    document.querySelectorAll('.poslato-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        btn.disabled = true; btn.textContent = '...';
+        zahtev('updateOrderStatus', { brojPorudzbine: btn.dataset.broj, noviStatus: 'POSLATA' }).then(function(res){
+          if (!res.uspesno) alert(res.poruka);
+          osveziSve();
+        });
+      });
+    });
+    document.querySelectorAll('.izmeni-porudzbinu-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ otvoriIzmenuPorudzbine(btn.dataset.broj); });
+    });
+}
+
+/**
+ * "Izmeni" — namerniji, odvojen korak za otkazivanje (umesto brzog
+ * dugmeta pored Potvrdi). Prodavac prvo vidi pun detalj porudžbine,
+ * pa tek onda, ako zaista treba, otkazuje — sa dodatnom potvrdom.
+ */
+function otvoriIzmenuPorudzbine(brojPorudzbine){
+  const razlog = prompt('Otkazivanje porudžbine ' + brojPorudzbine + '.\n\nOvo će vratiti robu u stanje (dostupna za druge kupce).\n\nUkucajte "otkazi" da potvrdite, ili Otkaži/Cancel da odustanete od ove akcije:');
+  if (razlog === null) return; // odustala je od dijaloga
+  if (razlog.trim().toLowerCase() !== 'otkazi') {
+    alert('Nije upisano "otkazi" — porudžbina NIJE menjana.');
+    return;
+  }
+  zahtev('otkaziPorudzbinu', { brojPorudzbine: brojPorudzbine }).then(function(res){
+    if (!res.uspesno) alert(res.poruka);
+    osveziSve();
+  });
+}
+
+// ---------- INVENTAR ----------
+let poslednjiInventar = [];
+
+function popuniKategorijaFilter(){
+  const sel = document.getElementById('inventarKategorijaFilter');
+  PRODAVNICA_DATA.kategorije.forEach(function(k){
+    const opt = document.createElement('option');
+    opt.value = k.id; opt.textContent = k.naziv + (k.pol === 'zensko' ? ' (Žensko)' : ' (Muško)');
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', renderInventarTable);
+  document.getElementById('inventarPretraga').addEventListener('input', renderInventarTable);
+}
+
+function renderInventarTable(){
+  const pretraga = document.getElementById('inventarPretraga').value.toLowerCase();
+  const kategorija = document.getElementById('inventarKategorijaFilter').value;
+
+  const filtrirano = poslednjiInventar.filter(function(inv){
+    const p = PRODAVNICA_DATA.proizvodi.find(function(pr){ return pr.id == inv.productId; });
+    if (!p) return false;
+    if (kategorija !== 'sve' && p.kategorija !== kategorija) return false;
+    if (pretraga && p.naziv.toLowerCase().indexOf(pretraga) === -1) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('inventarTable');
+  tbody.innerHTML = filtrirano.map(function(inv){
+    return '<tr>' +
+      '<td>' + nazivProizvoda(inv.productId) + '</td>' +
+      '<td>' + inv.velicina + '</td>' +
+      '<td><input type="number" min="0" value="' + inv.zaliha + '" class="zaliha-input" data-pid="' + inv.productId + '" data-vel="' + inv.velicina + '"></td>' +
+      '<td>' + inv.prodato + '</td>' +
+      '<td' + (inv.preostalo <= 0 ? ' style="color:var(--warn);"' : '') + '>' + inv.preostalo + '</td>' +
+      '<td><button class="btn secondary sacuvaj-zaliha-btn" data-pid="' + inv.productId + '" data-vel="' + inv.velicina + '">Sačuvaj</button></td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="6" style="color:var(--ink-soft);">Nema rezultata.</td></tr>';
+
+  document.querySelectorAll('.sacuvaj-zaliha-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const input = document.querySelector('.zaliha-input[data-pid="' + btn.dataset.pid + '"][data-vel="' + btn.dataset.vel + '"]');
+      btn.textContent = '...';
+      zahtev('updateInventoryZaliha', { productId: btn.dataset.pid, velicina: btn.dataset.vel, novaZaliha: input.value }).then(function(){
+        btn.textContent = 'Sačuvano';
+        setTimeout(function(){ btn.textContent = 'Sačuvaj'; }, 1500);
+      });
+    });
+  });
+}
+
+function ucitajInventar(){
+  zahtev('getInventory').then(function(res){
+    if (!res.uspesno) return;
+    poslednjiInventar = res.inventar;
+    renderInventarTable();
+  });
+}
+
+// ---------- PODESAVANJA ----------
+function ucitajPodesavanja(){
+  zahtev('getSettings').then(function(res){
+    if (!res.uspesno) return;
+    document.getElementById('radnoVremeInput').value = res.podesavanja.RadnoVreme || '';
+    document.getElementById('radniDaniInput').value = res.podesavanja.RadniDani || '';
+  });
+}
+document.getElementById('sacuvajPodesavanjaBtn').addEventListener('click', function(){
+  const radnoVreme = document.getElementById('radnoVremeInput').value;
+  const radniDani = document.getElementById('radniDaniInput').value;
+  zahtev('updateSettings', { radnoVreme: radnoVreme, radniDani: radniDani }).then(function(res){
+    if (res.uspesno) {
+      const el = document.getElementById('podesavanjaSuccess');
+      el.style.display = 'block';
+      setTimeout(function(){ el.style.display = 'none'; }, 2000);
+    }
+  });
+});
+
+document.getElementById('promeniLozinkuBtn').addEventListener('click', function(){
+  const stara = document.getElementById('staraLozinkaInput').value;
+  const nova = document.getElementById('novaLozinkaInput').value;
+  const potvrda = document.getElementById('potvrdiLozinkaInput').value;
+  const greskaEl = document.getElementById('lozinkaGreska');
+  const uspehEl = document.getElementById('lozinkaUspeh');
+  greskaEl.style.display = 'none';
+  uspehEl.style.display = 'none';
+
+  if (nova !== potvrda) {
+    greskaEl.textContent = 'Nova lozinka i potvrda se ne poklapaju.';
+    greskaEl.style.display = 'block';
+    return;
+  }
+
+  zahtev('promeniLozinku', { staraLozinka: stara, novaLozinka: nova }).then(function(res){
+    if (res.uspesno) {
+      uspehEl.style.display = 'block';
+      document.getElementById('staraLozinkaInput').value = '';
+      document.getElementById('novaLozinkaInput').value = '';
+      document.getElementById('potvrdiLozinkaInput').value = '';
+      sessionStorage.setItem('amara_admin_lozinka', nova); // azuriraj trenutnu sesiju
+    } else {
+      greskaEl.textContent = res.poruka || 'Greška pri promeni lozinke.';
+      greskaEl.style.display = 'block';
+    }
+  });
+});
+
+// ---------- PROIZVODI ----------
+let trenutnaFotoBase64 = { foto1: null, foto2: null };
+let poslednjiProizvodi = [];
+
+function fajlUBase64(input, previewImgId, kljuc){
+  input.addEventListener('change', function(){
+    const fajl = input.files[0];
+    if (!fajl) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      trenutnaFotoBase64[kljuc] = e.target.result;
+      const preview = document.getElementById(previewImgId);
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(fajl);
+  });
+}
+
+function popuniPKategoriju(){
+  const pol = document.getElementById('pPol').value;
+  const sel = document.getElementById('pKategorija');
+  sel.innerHTML = PRODAVNICA_DATA.kategorije.filter(function(k){ return k.pol === pol; })
+    .map(function(k){ return '<option value="' + k.id + '">' + k.naziv + '</option>'; }).join('');
+}
+
+function popuniPBoje(){
+  document.getElementById('pBoje').innerHTML = PRODAVNICA_DATA.boje.map(function(b){
+    return '<label style="margin-right:14px;font-size:13.5px;"><input type="checkbox" value="' + b + '" class="p-boja-check"> ' + b + '</label>';
+  }).join('');
+}
+
+function resetujProizvodForm(){
+  document.getElementById('pId').value = '';
+  document.getElementById('pNaziv').value = '';
+  document.getElementById('pCena').value = '';
+  document.getElementById('pOpis').value = '';
+  document.getElementById('pPol').value = 'zensko';
+  popuniPKategoriju();
+  popuniPBoje();
+  document.getElementById('pFoto1Preview').style.display = 'none';
+  document.getElementById('pFoto2Preview').style.display = 'none';
+  trenutnaFotoBase64 = { foto1: null, foto2: null };
+  document.getElementById('proizvodFormNaslov').textContent = 'Dodaj novi proizvod';
+  document.getElementById('otkaziIzmenuBtn').style.display = 'none';
+}
+
+function ucitajProizvodeAdmin(){
+  zahtev('getProductsAdmin').then(function(res){
+    if (!res.uspesno) return;
+    poslednjiProizvodi = res.proizvodi.map(function(p){
+      const kat = PRODAVNICA_DATA.kategorije.find(function(k){ return k.id === p.kategorija; });
+      p.kategorijaNaziv = kat ? kat.naziv : p.kategorija;
+      return p;
+    });
+    renderProizvodiTable();
+  });
+}
+
+function renderProizvodiTable(){
+  const pretraga = document.getElementById('proizvodiPretraga').value.toLowerCase();
+  const filtrirano = poslednjiProizvodi.filter(function(p){
+    return !pretraga || p.naziv.toLowerCase().indexOf(pretraga) !== -1;
+  });
+  document.getElementById('proizvodiTable').innerHTML = filtrirano.map(function(p){
+    const neaktivanStil = p.aktivan === false ? ' style="opacity:.45;"' : '';
+    const dugmeAktivnosti = p.aktivan === false
+      ? '<button class="btn small aktiviraj-btn" data-id="' + p.id + '">Aktiviraj</button>'
+      : '<button class="btn small secondary deaktiviraj-btn" data-id="' + p.id + '">Deaktiviraj</button>';
+    return '<tr' + neaktivanStil + '>' +
+      '<td>' + (p.foto1 ? '<img src="' + p.foto1 + '" style="width:40px;height:53px;object-fit:cover;border-radius:3px;">' : '—') + '</td>' +
+      '<td>' + p.naziv + (p.aktivan === false ? ' <span style="color:var(--warn);font-size:11px;">(neaktivan)</span>' : '') + '</td>' +
+      '<td>' + p.kategorijaNaziv + '</td>' +
+      '<td>' + formatCena(p.cena) + '</td>' +
+      '<td>' +
+        '<button class="btn secondary small izmeni-proizvod-btn" data-id="' + p.id + '">Izmeni</button>' +
+        dugmeAktivnosti +
+        '<button class="btn secondary small obrisi-proizvod-btn" data-id="' + p.id + '" data-naziv="' + p.naziv + '" style="color:var(--accent);">Obriši trajno</button>' +
+      '</td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="5" style="color:var(--ink-soft);">Nema proizvoda.</td></tr>';
+
+  document.querySelectorAll('.izmeni-proizvod-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ ucitajProizvodUFormu(btn.dataset.id); });
+  });
+  document.querySelectorAll('.deaktiviraj-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ promeniAktivnost(btn.dataset.id, 'deaktivirajProizvod'); });
+  });
+  document.querySelectorAll('.aktiviraj-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ promeniAktivnost(btn.dataset.id, 'aktivirajProizvod'); });
+  });
+  document.querySelectorAll('.obrisi-proizvod-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ obrisiProizvodTrajnoKlik(btn.dataset.id, btn.dataset.naziv); });
+  });
+}
+
+function promeniAktivnost(id, akcija){
+  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ akcija: akcija, id: id, lozinka: getLozinku() }) })
+    .then(function(res){ return res.json(); })
+    .then(function(res){
+      if (res.uspesno) { osveziSve(); }
+      else { alert(res.poruka || 'Greška.'); }
+    });
+}
+
+/**
+ * TRAJNO brisanje — trazi da admin UKUCA tacan naziv proizvoda da
+ * potvrdi (ne samo klik na OK), isto kao i kod otkazivanja porudzbine.
+ * Ovo se NE MOZE povratiti.
+ */
+function obrisiProizvodTrajnoKlik(id, naziv){
+  const unos = prompt('TRAJNO brisanje "' + naziv + '".\n\nOvo se NE MOZE povratiti (za razliku od Deaktiviraj, koje moze).\n\nUkucajte tacan naziv proizvoda da potvrdite:');
+  if (unos === null) return;
+  if (unos.trim() !== naziv) {
+    alert('Naziv se ne poklapa — proizvod NIJE obrisan.');
+    return;
+  }
+  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ akcija: 'obrisiProizvod', id: id, lozinka: getLozinku() }) })
+    .then(function(res){ return res.json(); })
+    .then(function(res){
+      if (res.uspesno) { osveziSve(); }
+      else { alert(res.poruka || 'Greška.'); }
+    });
+}
+
+function ucitajProizvodUFormu(id){
+  const p = poslednjiProizvodi.find(function(pr){ return pr.id == id; });
+  if (!p) return;
+  document.getElementById('pId').value = p.id;
+  document.getElementById('pNaziv').value = p.naziv;
+  document.getElementById('pCena').value = p.cena;
+  document.getElementById('pOpis').value = p.opis;
+  document.getElementById('pPol').value = p.pol;
+  popuniPKategoriju();
+  document.getElementById('pKategorija').value = p.kategorija;
+  popuniPBoje();
+  document.querySelectorAll('.p-boja-check').forEach(function(cb){ cb.checked = p.boje.indexOf(cb.value) !== -1; });
+  if (p.foto1) { document.getElementById('pFoto1Preview').src = p.foto1; document.getElementById('pFoto1Preview').style.display = 'block'; }
+  if (p.foto2) { document.getElementById('pFoto2Preview').src = p.foto2; document.getElementById('pFoto2Preview').style.display = 'block'; }
+  trenutnaFotoBase64 = { foto1: null, foto2: null };
+  document.getElementById('proizvodFormNaslov').textContent = 'Izmeni proizvod: ' + p.naziv;
+  document.getElementById('otkaziIzmenuBtn').style.display = 'inline-block';
+  document.getElementById('tab-proizvodi').scrollIntoView({ behavior: 'smooth' });
+}
+
+function pokreniProizvodiTab(){
+  osveziSve();
+  popuniPKategoriju();
+  popuniPBoje();
+  document.getElementById('pPol').addEventListener('change', popuniPKategoriju);
+  document.getElementById('proizvodiPretraga').addEventListener('input', renderProizvodiTable);
+  fajlUBase64(document.getElementById('pFoto1'), 'pFoto1Preview', 'foto1');
+  fajlUBase64(document.getElementById('pFoto2'), 'pFoto2Preview', 'foto2');
+  document.getElementById('otkaziIzmenuBtn').addEventListener('click', resetujProizvodForm);
+
+  document.getElementById('sacuvajProizvodBtn').addEventListener('click', function(){
+    const id = document.getElementById('pId').value;
+    const boje = Array.from(document.querySelectorAll('.p-boja-check:checked')).map(function(cb){ return cb.value; });
+    const postojeci = id ? poslednjiProizvodi.find(function(p){ return p.id == id; }) : null;
+
+    const podaci = {
+      akcija: id ? 'updateProduct' : 'addProduct',
+      lozinka: getLozinku(),
+      id: id || undefined,
+      naziv: document.getElementById('pNaziv').value,
+      opis: document.getElementById('pOpis').value,
+      cena: document.getElementById('pCena').value,
+      pol: document.getElementById('pPol').value,
+      kategorija: document.getElementById('pKategorija').value,
+      boje: boje,
+      foto1Base64: trenutnaFotoBase64.foto1,
+      foto2Base64: trenutnaFotoBase64.foto2,
+      foto1UrlPostojeci: postojeci ? postojeci.foto1 : '',
+      foto2UrlPostojeci: postojeci ? postojeci.foto2 : '',
+    };
+
+    const greskaEl = document.getElementById('proizvodGreska');
+    const uspehEl = document.getElementById('proizvodUspeh');
+    greskaEl.style.display = 'none';
+    uspehEl.style.display = 'none';
+
+    if (!podaci.naziv || !podaci.cena) {
+      greskaEl.textContent = 'Unesite bar naziv i cenu.';
+      greskaEl.style.display = 'block';
+      return;
+    }
+
+    document.getElementById('sacuvajProizvodBtn').disabled = true;
+    document.getElementById('sacuvajProizvodBtn').textContent = 'Čuvanje...';
+
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(podaci) })
+      .then(function(res){ return res.json(); })
+      .then(function(res){
+        document.getElementById('sacuvajProizvodBtn').disabled = false;
+        document.getElementById('sacuvajProizvodBtn').textContent = 'Sačuvaj proizvod';
+        if (res.uspesno) {
+          uspehEl.style.display = 'block';
+          proizvodiUcitani = false; // forsiraj ponovno ucitavanje javne liste (za prodavnicu)
+          osveziSve();
+          resetujProizvodForm();
+        } else {
+          greskaEl.textContent = res.poruka || 'Greška pri čuvanju.';
+          greskaEl.style.display = 'block';
+        }
+      })
+      .catch(function(){
+        document.getElementById('sacuvajProizvodBtn').disabled = false;
+        document.getElementById('sacuvajProizvodBtn').textContent = 'Sačuvaj proizvod';
+        greskaEl.textContent = 'Greška pri slanju. Proverite konekciju.';
+        greskaEl.style.display = 'block';
+      });
+  });
+}
+
+// ucitaj SVE odjednom, jednim pozivom (brze nego 7 odvojenih poziva)
+popuniKategorijaFilter();
+popuniPKategoriju();
+popuniPBoje();
+document.getElementById('pPol').addEventListener('change', popuniPKategoriju);
+document.getElementById('proizvodiPretraga').addEventListener('input', renderProizvodiTable);
+fajlUBase64(document.getElementById('pFoto1'), 'pFoto1Preview', 'foto1');
+fajlUBase64(document.getElementById('pFoto2'), 'pFoto2Preview', 'foto2');
+document.getElementById('otkaziIzmenuBtn').addEventListener('click', resetujProizvodForm);
+
+zahtev('getAdminDashboard').then(function(res){
+  if (!res.uspesno) { alert(res.poruka || 'Greška pri učitavanju.'); return; }
+
+  renderStatistiku(res.statistika);
+
+  poslednjePorudzbine = res.porudzbine;
+  renderPorudzbineTable();
+
+  poslednjiInventar = res.inventar;
+  renderInventarTable();
+
+  document.getElementById('radnoVremeInput').value = res.podesavanja.RadnoVreme || '';
+  document.getElementById('radniDaniInput').value = res.podesavanja.RadniDani || '';
+
+  poslednjiProizvodi = res.proizvodi.map(function(p){
+    const kat = PRODAVNICA_DATA.kategorije.find(function(k){ return k.id === p.kategorija; });
+    p.kategorijaNaziv = kat ? kat.naziv : p.kategorija;
+    return p;
+  });
+  renderProizvodiTable();
+});
+</script>
+</body>
+</html>

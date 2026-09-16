@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin prijava — AMARA</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="login-shell">
+  <div class="login-box">
+    <h2>AMARA <span class="mono" style="color:var(--accent);">admin</span></h2>
+    <input type="password" id="lozinkaInput" placeholder="Lozinka">
+    <button class="btn" id="loginBtn">Prijavi se</button>
+    <p class="login-error" id="loginError">Neispravna lozinka.</p>
+  </div>
+</div>
+
+<script src="adminApi.js"></script>
+<script>
+  document.getElementById('loginBtn').addEventListener('click', pokusajPrijavu);
+  document.getElementById('lozinkaInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') pokusajPrijavu();
+  });
+
+  function pokusajPrijavu(){
+    const lozinka = document.getElementById('lozinkaInput').value;
+    sessionStorage.setItem('amara_admin_lozinka', lozinka);
+    zahtev('login').then(function(res){
+      if (res.uspesno) {
+        window.location.href = 'index.html';
+      } else {
+        sessionStorage.removeItem('amara_admin_lozinka');
+        document.getElementById('loginError').style.display = 'block';
+      }
+    });
+  }
+</script>
+</body>
+</html>

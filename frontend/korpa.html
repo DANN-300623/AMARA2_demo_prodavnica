@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Korpa — AMARA</title>
+<link rel="stylesheet" href="stil.css">
+<style>
+  .cart-page{ padding: 48px 0 100px; }
+  .cart-page h1{ font-family: 'Italiana', serif; font-size: 36px; margin: 0 0 32px; }
+  .cart-layout{ display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
+  .cart-item{
+    display: grid; grid-template-columns: 90px 1fr auto; gap: 18px; align-items: center;
+    padding: 20px 0; border-bottom: 1px solid var(--line);
+  }
+  .cart-item__img{
+    aspect-ratio: 3/4; background: var(--bg-raised); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--ink-soft);
+    text-align: center; padding: 4px;
+  }
+  .cart-item__name{ font-size: 15px; margin: 0 0 4px; }
+  .cart-item__meta{ font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
+  .cart-item__qty{ display: flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 4px; width: fit-content; }
+  .cart-item__qty button{ width: 30px; height: 32px; background: none; border: none; font-size: 14px; }
+  .cart-item__qty span{ width: 26px; text-align: center; font-size: 13px; }
+  .cart-item__right{ text-align: right; }
+  .cart-item__price{ font-size: 15px; margin-bottom: 10px; }
+  .cart-item__remove{ font-size: 12px; color: var(--ink-soft); background: none; border: none; text-decoration: underline; }
+
+  .cart-summary{
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: 6px; padding: 26px;
+    position: sticky; top: 110px;
+  }
+  .cart-summary h3{ font-family: 'Italiana', serif; font-size: 22px; margin: 0 0 20px; font-weight:400; }
+  .cart-summary__row{ display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--ink-soft); }
+  .cart-summary__total{ display: flex; justify-content: space-between; font-size: 17px; margin: 18px 0; padding-top: 14px; border-top: 1px solid var(--line-strong); }
+  .checkout-btn{
+    width: 100%; padding: 15px; background: var(--ink); color: var(--bg); border: none; border-radius: 4px;
+    font-size: 15px; transition: background .2s ease;
+  }
+  .checkout-btn:hover{ background: var(--accent); }
+  .empty-cart{ text-align: center; padding: 80px 20px; color: var(--ink-soft); }
+  .empty-cart h2{ font-family: 'Italiana', serif; color: var(--ink); font-size: 26px; margin-bottom: 10px; }
+  .empty-cart a{ color: var(--accent); text-decoration: underline; }
+
+  @media (max-width: 800px){ .cart-layout{ grid-template-columns: 1fr; } .cart-summary{ position: static; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
+    <nav class="header-nav">
+      <a href="index.html?pol=zensko">Žensko</a>
+      <a href="index.html?pol=musko">Muško</a>
+      <a href="index.html">Sve</a>
+    </nav>
+    <div class="header-actions">
+      <a href="korpa.html" class="cart-link active">Korpa <span class="cart-count" id="cartCount">0</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="container cart-page">
+  <h1>Vaša korpa</h1>
+  <div id="cartContent"></div>
+</div>
+
+<footer class="site-footer">
+  AMARA<span class="demo-tag">DEMO</span> — demo prodavnica, DANN.web.workshop
+</footer>
+
+<script src="podaci.js"></script>
+<script src="korpa.js"></script>
+<script src="prodavnica-api.js"></script>
+<script>
+ucitajProizvode(function(){
+(function(){
+  function render(){
+    const korpa = ucitajKorpu();
+    const content = document.getElementById('cartContent');
+
+    if (korpa.length === 0) {
+      content.innerHTML = '<div class="empty-cart"><h2>Korpa je prazna</h2><p>Pogledajte <a href="index.html">celu ponudu →</a></p></div>';
+      return;
+    }
+
+    let ukupno = 0;
+    const itemsHtml = korpa.map(function(stavka, indeks){
+      const p = nadjiProizvod(stavka.productId);
+      if (!p) return '';
+      const cena = p.cena * stavka.kolicina;
+      ukupno += cena;
+      return (
+        '<div class="cart-item">' +
+          '<div class="cart-item__img">' + p.naziv + '</div>' +
+          '<div>' +
+            '<h3 class="cart-item__name"><a href="proizvod.html?id=' + p.id + '">' + p.naziv + '</a></h3>' +
+            '<div class="cart-item__meta">' + stavka.boja + ' · Veličina ' + stavka.velicina + '</div>' +
+            '<div class="cart-item__qty">' +
+              '<button class="qty-dec" data-i="' + indeks + '">−</button>' +
+              '<span>' + stavka.kolicina + '</span>' +
+              '<button class="qty-inc" data-i="' + indeks + '">+</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cart-item__right">' +
+            '<div class="cart-item__price">' + formatCena(cena) + '</div>' +
+            '<button class="cart-item__remove" data-i="' + indeks + '">Ukloni</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    content.innerHTML =
+      '<div class="cart-layout">' +
+        '<div>' + itemsHtml + '</div>' +
+        '<div class="cart-summary">' +
+          '<h3>Pregled porudžbine</h3>' +
+          '<div class="cart-summary__row"><span>Međuzbir</span><span>' + formatCena(ukupno) + '</span></div>' +
+          '<div class="cart-summary__row"><span>Dostava</span><span>Dogovara se</span></div>' +
+          '<div class="cart-summary__total"><span>Ukupno</span><span>' + formatCena(ukupno) + '</span></div>' +
+          '<a href="checkout.html" class="checkout-btn" style="display:block;text-align:center;text-decoration:none;">Nastavi na plaćanje</a>' +
+        '</div>' +
+      '</div>';
+
+    content.querySelectorAll('.qty-inc').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const i = parseInt(btn.dataset.i, 10);
+        promeniKolicinu(i, korpa[i].kolicina + 1);
+        render();
+      });
+    });
+    content.querySelectorAll('.qty-dec').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const i = parseInt(btn.dataset.i, 10);
+        promeniKolicinu(i, korpa[i].kolicina - 1);
+        render();
+      });
+    });
+    content.querySelectorAll('.cart-item__remove').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        ukloniIzKorpe(parseInt(btn.dataset.i, 10));
+        render();
+      });
+    });
+  }
+  render();
+})();
+});
+</script>
+</body>
+</html>

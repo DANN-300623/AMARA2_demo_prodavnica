@@ -1,0 +1,254 @@
+/* ===========================================================
+   BUTIK — deljeni dizajn sistem
+   =========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg: #F5EFE3;
+  --bg-raised: #FAF6EC;
+  --ink: #1A1815;
+  --ink-soft: rgba(32,31,28,0.62);
+  --line: #DED2BC;
+  --line-strong: #C7B79A;
+  --accent: #7A1F30;
+  --accent-soft: rgba(122,31,48,0.09);
+  --white: #FDFCFA;
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Work Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img{ max-width:100%; display:block; }
+a{ color: inherit; text-decoration: none; }
+button{ font-family: inherit; cursor: pointer; }
+
+.serif{ font-family: 'Italiana', serif; }
+
+.container{ max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+/* ---------- HEADER ---------- */
+.site-header{
+  position: sticky; top: 0; z-index: 200;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 32px;
+}
+.logo{
+  font-family: 'Italiana', serif;
+  font-style: italic;
+  font-size: 26px;
+  letter-spacing: .01em;
+}
+.header-nav{ display: flex; gap: 28px; align-items: center; }
+.header-nav a{ font-size: 14px; color: var(--ink-soft); transition: color .2s ease; }
+.header-nav a:hover, .header-nav a.active{ color: var(--ink); }
+.header-actions{ display: flex; align-items: center; gap: 18px; }
+.cart-link{
+  position: relative; font-size: 14px; display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--ink); padding: 9px 16px; border-radius: 30px;
+  transition: background .2s ease, color .2s ease;
+}
+.cart-link:hover{ background: var(--ink); color: var(--bg); }
+.cart-count{
+  font-size: 12px; font-weight: 600;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--line);
+}
+.hero--photo{
+  position: relative; padding: 0; border-bottom: none;
+  min-height: 480px; display: flex; align-items: flex-end;
+  overflow: hidden;
+}
+.hero__img{
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
+}
+.hero__overlay{
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(32,31,28,0.05) 0%, rgba(32,31,28,0.75) 100%);
+}
+.hero__content{
+  position: relative; padding: 48px 32px 56px; color: var(--white);
+}
+.hero--photo h1{ color: var(--white); }
+.hero--photo h1 em{ color: #E8C9A8; }
+.hero--photo p{ color: rgba(255,255,255,0.85); }
+.hero h1{
+  font-family: 'Italiana', serif;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 1.05;
+  margin: 0 0 16px;
+  max-width: 14ch;
+}
+.hero h1 em{ font-style: italic; color: var(--accent); }
+.hero p{
+  color: var(--ink-soft); font-size: 17px; max-width: 46ch; margin: 0;
+}
+
+/* ---------- SHOP LAYOUT ---------- */
+.shop-layout{
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 48px;
+  padding: 48px 0 100px;
+  align-items: start;
+}
+
+/* ---------- FILTERS ---------- */
+.filters{
+  position: sticky; top: 96px;
+  border-right: 1px solid var(--line);
+  padding-right: 32px;
+}
+.filter-group{ margin-bottom: 32px; }
+.filter-group h3{
+  font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  margin: 0 0 14px; color: var(--ink);
+}
+.filter-option{
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--ink-soft); padding: 6px 0; cursor: pointer;
+  transition: color .2s ease;
+}
+.filter-option:hover{ color: var(--ink); }
+.filter-option input{ accent-color: var(--accent); width: 15px; height: 15px; }
+.filter-option.active-pol{ color: var(--ink); font-weight: 600; }
+
+.color-swatches{ display: flex; gap: 10px; flex-wrap: wrap; }
+.color-swatch{
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; position: relative;
+  transition: border-color .2s ease;
+}
+.color-swatch[data-color="Crna"]{ background: #201F1C; }
+.color-swatch[data-color="Bez"]{ background: #E4D9C4; }
+.color-swatch[data-color="Bordo"]{ background: #6B2737; }
+.color-swatch.selected{ border-color: var(--ink); }
+
+.price-range{ display: flex; flex-direction: column; gap: 10px; }
+.price-range input[type="range"]{ accent-color: var(--accent); width: 100%; }
+.price-range-values{ font-size: 13px; color: var(--ink-soft); display: flex; justify-content: space-between; }
+
+.clear-filters{
+  font-size: 13px; color: var(--accent); border: none; background: none; padding: 4px 0;
+  text-decoration: underline;
+}
+
+/* ---------- SORT + COUNT BAR ---------- */
+.shop-toolbar{
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.results-count{ font-size: 14px; color: var(--ink-soft); }
+.sort-select{
+  font-family: 'Work Sans', sans-serif; font-size: 14px;
+  border: 1px solid var(--line-strong); background: var(--white);
+  padding: 9px 14px; border-radius: 4px; color: var(--ink);
+}
+
+/* ---------- PRODUCT GRID ---------- */
+.product-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 24px;
+}
+.product-card{
+  display: block;
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+.product-card.is-visible{ opacity: 1; transform: translateY(0); }
+
+.product-card__img{
+  aspect-ratio: 3/4;
+  border-radius: 2px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.product-card__img .ph{
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Italiana', serif; font-style: italic; font-size: 15px;
+  color: var(--ink-soft);
+  transition: transform .5s var(--ease);
+}
+.product-card:hover .product-card__img .ph{ transform: scale(1.04); }
+
+.product-card__sold-out{
+  position: absolute; top: 12px; left: 12px;
+  background: var(--ink); color: var(--bg);
+  font-size: 11px; letter-spacing: .04em; padding: 5px 10px; border-radius: 2px;
+}
+
+.product-card__name{ font-size: 15px; margin: 0 0 4px; }
+.product-card__price{ font-size: 14px; color: var(--ink-soft); }
+.product-card__colors{ display: flex; gap: 5px; margin-top: 8px; }
+.product-card__colors span{
+  width: 13px; height: 13px; border-radius: 50%; display: inline-block; border: 1px solid var(--line-strong);
+}
+
+.no-results{
+  grid-column: 1 / -1;
+  text-align: center; padding: 80px 20px; color: var(--ink-soft);
+}
+.no-results h3{ font-family:'Italiana',serif; font-size: 24px; color: var(--ink); margin-bottom: 8px; }
+
+/* ---------- MOBILE ---------- */
+.filter-toggle-mobile{ display: none; }
+
+@media (max-width: 900px){
+  .shop-layout{ grid-template-columns: 1fr; }
+  .filters{
+    position: fixed; inset: 0; z-index: 500;
+    background: var(--bg); padding: 24px 24px 100px;
+    overflow-y: auto; border-right: none;
+    transform: translateX(-100%); transition: transform .3s var(--ease);
+  }
+  .filters.open{ transform: translateX(0); }
+  .filter-toggle-mobile{
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--ink); padding: 9px 16px; border-radius: 30px; font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .filters-close{
+    display: block; margin-bottom: 24px; font-size: 14px; border: none; background: none;
+  }
+  .product-grid{ grid-template-columns: repeat(2, 1fr); }
+  .header-nav{ display: none; }
+}
+
+@media (max-width: 560px){
+  .container{ padding: 0 18px; }
+  .header-inner{ padding: 16px 18px; }
+  .product-grid{ gap: 20px 14px; }
+}
+
+/* ---------- FOOTER ---------- */
+.site-footer{
+  border-top: 1px solid var(--line);
+  padding: 40px 0; text-align: center;
+  font-size: 13px; color: var(--ink-soft);
+}
+.demo-tag{
+  font-family: 'Work Sans', sans-serif; font-size: 10.5px; letter-spacing: .08em;
+  border: 1px solid currentColor; padding: 2px 8px; border-radius: 10px; margin-left: 8px;
+  opacity: .6; text-transform: uppercase; vertical-align: middle;
+}

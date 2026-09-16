@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plaćanje — AMARA</title>
+<link rel="stylesheet" href="stil.css">
+<style>
+  .checkout-page{ padding: 48px 0 100px; }
+  .checkout-page h1{ font-family: 'Italiana', serif; font-size: 34px; margin: 0 0 32px; }
+  .checkout-layout{ display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
+  .form-row{ margin-bottom: 18px; }
+  .form-row label{ display: block; font-size: 13px; margin-bottom: 6px; color: var(--ink-soft); }
+  .form-row input, .form-row textarea{
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: 4px;
+    font-family: 'Work Sans', sans-serif; font-size: 15px; background: var(--white); color: var(--ink);
+  }
+  .form-row input:focus, .form-row textarea:focus{ outline: 2px solid var(--accent); outline-offset: 1px; }
+  .form-two-col{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .payment-options{ display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+  .payment-option{
+    display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-strong); border-radius: 4px;
+    padding: 14px; font-size: 14px; cursor: pointer;
+  }
+  .payment-option input{ accent-color: var(--accent); }
+
+  .order-summary{
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: 6px; padding: 26px;
+    position: sticky; top: 110px;
+  }
+  .order-summary h3{ font-family: 'Italiana', serif; font-weight: 400; font-size: 20px; margin: 0 0 18px; }
+  .order-summary__item{ display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
+  .order-summary__total{ display: flex; justify-content: space-between; font-size: 17px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line-strong); }
+  .submit-btn{
+    width: 100%; padding: 16px; background: var(--ink); color: var(--bg); border: none; border-radius: 4px;
+    font-size: 15px; margin-top: 8px; transition: background .2s ease;
+  }
+  .submit-btn:hover{ background: var(--accent); }
+  .submit-btn:disabled{ background: var(--line-strong); cursor: wait; }
+  .form-error{
+    color: #6B2737; font-size: 13.5px; line-height: 1.55;
+    background: rgba(107,39,55,0.06); border: 1px solid rgba(107,39,55,0.25);
+    border-radius: 6px; padding: 14px 16px; margin-bottom: 18px; display: none;
+  }
+
+  @media (max-width: 800px){ .checkout-layout{ grid-template-columns: 1fr; } .order-summary{ position: static; } .form-two-col{ grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
+    <nav class="header-nav">
+      <a href="index.html?pol=zensko">Žensko</a>
+      <a href="index.html?pol=musko">Muško</a>
+      <a href="index.html">Sve</a>
+    </nav>
+    <div class="header-actions">
+      <a href="korpa.html" class="cart-link">Korpa <span class="cart-count" id="cartCount">0</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="container checkout-page">
+  <h1>Plaćanje</h1>
+  <div class="checkout-layout">
+    <form id="checkoutForm">
+      <div class="form-row">
+        <label for="ime">Ime i prezime</label>
+        <input type="text" id="ime" required>
+      </div>
+      <div class="form-two-col">
+        <div class="form-row">
+          <label for="telefon">Telefon</label>
+          <input type="tel" id="telefon" required>
+        </div>
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="adresa">Adresa</label>
+        <input type="text" id="adresa" required>
+      </div>
+      <div class="form-two-col">
+        <div class="form-row">
+          <label for="grad">Grad</label>
+          <input type="text" id="grad" required>
+        </div>
+        <div class="form-row">
+          <label for="postanski">Poštanski broj</label>
+          <input type="text" id="postanski" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="napomena">Napomena (opciono)</label>
+        <textarea id="napomena" rows="3"></textarea>
+      </div>
+
+      <div class="payment-options">
+        <label class="payment-option"><input type="radio" name="placanje" value="POUZECEM" checked> Plaćanje pouzećem</label>
+        <label class="payment-option"><input type="radio" name="placanje" value="RACUN"> Plaćanje na račun</label>
+      </div>
+
+      <div class="form-row">
+        <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;font-weight:400;">
+          <input type="checkbox" id="privacyConsent" required style="margin-top:3px;flex-shrink:0;">
+          <span>Slažem se sa Politikom privatnosti — email/podaci se koriste isključivo za obradu ove porudžbine, ni u koje druge svrhe.</span>
+        </label>
+      </div>
+
+      <p class="form-error" id="formError">Molimo popunite sva obavezna polja.</p>
+      <button type="submit" class="submit-btn" id="submitBtn">Pošalji porudžbinu</button>
+    </form>
+
+    <div class="order-summary" id="orderSummary"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  AMARA<span class="demo-tag">DEMO</span> — demo prodavnica, DANN.web.workshop
+</footer>
+
+<script src="podaci.js"></script>
+<script src="korpa.js"></script>
+<script src="prodavnica-api.js"></script>
+<script>
+ucitajProizvode(function(){
+(function(){
+  // OVAJ URL SE POPUNJAVA POSLE DEPLOY-A APPS SCRIPT-A
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaTP5RsIOIQ8Lxn03Uxp5THuhU1t00f3htuKijAG0gpVIkMJXel_qhj8R228_Ou8Mt9w/exec';
+
+  const korpa = ucitajKorpu();
+  if (korpa.length === 0) {
+    window.location.href = 'korpa.html';
+  }
+
+  function renderSummary(){
+    let ukupno = 0;
+    const itemsHtml = korpa.map(function(st){
+      const p = nadjiProizvod(st.productId);
+      const cena = p.cena * st.kolicina;
+      ukupno += cena;
+      return '<div class="order-summary__item"><span>' + p.naziv + ' (' + st.boja + ', ' + st.velicina + ') x' + st.kolicina + '</span><span>' + formatCena(cena) + '</span></div>';
+    }).join('');
+    document.getElementById('orderSummary').innerHTML =
+      '<h3>Vaša porudžbina</h3>' + itemsHtml +
+      '<div class="order-summary__total"><span>Ukupno</span><span>' + formatCena(ukupno) + '</span></div>';
+    return ukupno;
+  }
+  const ukupnoIznos = renderSummary();
+
+  document.getElementById('checkoutForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    const errorEl = document.getElementById('formError');
+    const formEl = document.getElementById('checkoutForm');
+
+    if (!formEl.checkValidity()) {
+      formEl.reportValidity();
+      return;
+    }
+
+    const podaci = {
+      ime: document.getElementById('ime').value,
+      telefon: document.getElementById('telefon').value,
+      email: document.getElementById('email').value,
+      adresa: document.getElementById('adresa').value,
+      grad: document.getElementById('grad').value,
+      postanski: document.getElementById('postanski').value,
+      napomena: document.getElementById('napomena').value,
+      nacinPlacanja: document.querySelector('input[name="placanje"]:checked').value,
+      stavke: korpa.map(function(st){
+        const p = nadjiProizvod(st.productId);
+        return {
+          productId: st.productId,
+          naziv: p.naziv,
+          sifra: 'BTK-' + p.id,
+          boja: st.boja,
+          velicina: st.velicina,
+          kolicina: st.kolicina,
+          jedinicnaCena: p.cena,
+          ukupno: p.cena * st.kolicina,
+        };
+      }),
+      ukupnoPorudzbina: ukupnoIznos,
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Slanje u toku...';
+    errorEl.style.display = 'none';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(podaci),
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if (data.uspesno) {
+        localStorage.removeItem(KORPA_KEY);
+        window.location.href = 'uspesno.html?broj=' + encodeURIComponent(data.brojPorudzbine);
+      } else {
+        errorEl.innerHTML = (data.poruka || 'Došlo je do greške. Pokušajte ponovo.') +
+          '<br><br>Proverite Vaš mejl (uklju čujuci Spam/Promotions folder) — ukoliko Vam JE stiglo obaveštenje o porudžbini, porudžbina je prošla i NE morate ponovo da je šaljete. Ukoliko obaveštenje nije stiglo, pokušajte ponovo ili nas kontaktirajte telefonom.';
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Pošalji porudžbinu';
+      }
+    })
+    .catch(function(){
+      errorEl.innerHTML = 'Došlo je do greške pri prikazu potvrde, ali porudžbina je moguće ipak prošla.' +
+        '<br><br><strong>Pre nego što pokušate ponovo — proverite Vaš mejl</strong> (uklju čujuci Spam/Promotions folder). Ako je stigla potvrda porudžbine, NEMOJTE ponovo slati istu porudžbinu. Ako ništa nije stiglo u roku od par minuta, slobodno pokušajte ponovo ili nas kontaktirajte telefonom.';
+      errorEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Pošalji porudžbinu';
+    });
+  });
+})();
+});
+</script>
+</body>
+</html>
