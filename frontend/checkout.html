@@ -65,9 +65,9 @@
 
 <div class="container checkout-page">
   <h1>Plaćanje</h1>
- <p style="background:var(--accent-soft);color:var(--accent);padding:14px 18px;border-radius:6px;font-size:14px;margin-bottom:24px;">
-  Ovo je demo prikaz — test verzija kupovine. Proizvod se stvarno ne šalje, pa nije potrebno da unosite tačne podatke o dostavi. Samo upišite email na koji možemo da Vam odgovorimo, da vidite kako sistem radi.
-</p>
+  <p style="background:var(--accent-soft);color:var(--accent);padding:14px 18px;border-radius:6px;font-size:14px;margin-bottom:24px;">
+    Ovo je demo prikaz — test verzija kupovine. Proizvod se stvarno ne šalje, pa nije potrebno da unosite tačne podatke o dostavi. Samo upišite email na koji možemo da Vam odgovorimo, da vidite kako sistem radi.
+  </p>
   <div class="checkout-layout">
     <form id="checkoutForm">
       <div class="form-row">
@@ -76,8 +76,8 @@
       </div>
       <div class="form-two-col">
         <div class="form-row">
-          <label for="telefon">Telefon</label>
-          <input type="tel" id="telefon" required>
+          <label for="telefon">Telefon <span style="opacity:.6;">(opciono)</span></label>
+          <input type="tel" id="telefon">
         </div>
         <div class="form-row">
           <label for="email">Email</label>
@@ -85,17 +85,17 @@
         </div>
       </div>
       <div class="form-row">
-        <label for="adresa">Adresa</label>
-        <input type="text" id="adresa" required>
+        <label for="adresa">Adresa <span style="opacity:.6;">(opciono)</span></label>
+        <input type="text" id="adresa">
       </div>
       <div class="form-two-col">
         <div class="form-row">
-          <label for="grad">Grad</label>
-          <input type="text" id="grad" required>
+          <label for="grad">Grad <span style="opacity:.6;">(opciono)</span></label>
+          <input type="text" id="grad">
         </div>
         <div class="form-row">
-          <label for="postanski">Poštanski broj</label>
-          <input type="text" id="postanski" required>
+          <label for="postanski">Poštanski broj <span style="opacity:.6;">(opciono)</span></label>
+          <input type="text" id="postanski">
         </div>
       </div>
       <div class="form-row">
