@@ -16,8 +16,9 @@
   .cart-item__img{
     aspect-ratio: 3/4; background: var(--bg-raised); border: 1px solid var(--line);
     display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--ink-soft);
-    text-align: center; padding: 4px;
+    text-align: center; padding: 4px; overflow: hidden; border-radius: 2px;
   }
+  .cart-item__img img{ width: 100%; height: 100%; object-fit: cover; }
   .cart-item__name{ font-size: 15px; margin: 0 0 4px; }
   .cart-item__meta{ font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
   .cart-item__qty{ display: flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 4px; width: fit-content; }
@@ -92,17 +93,20 @@ ucitajProizvode(function(){
       if (!p) return '';
       const cena = p.cena * stavka.kolicina;
       ukupno += cena;
+      const preostaloNaStanju = p.inventar[stavka.velicina] ? Math.max(0, p.inventar[stavka.velicina].zaliha - p.inventar[stavka.velicina].prodato) : 0;
+      const dostigMaksimum = stavka.kolicina >= preostaloNaStanju;
       return (
         '<div class="cart-item">' +
-          '<div class="cart-item__img">' + p.naziv + '</div>' +
+          '<div class="cart-item__img">' + (p.foto1 ? '<img src="' + p.foto1 + '" alt="' + p.naziv + '" style="width:100%;height:100%;object-fit:cover;">' : p.naziv) + '</div>' +
           '<div>' +
             '<h3 class="cart-item__name"><a href="proizvod.html?id=' + p.id + '">' + p.naziv + '</a></h3>' +
             '<div class="cart-item__meta">' + stavka.boja + ' · Veličina ' + stavka.velicina + '</div>' +
             '<div class="cart-item__qty">' +
               '<button class="qty-dec" data-i="' + indeks + '">−</button>' +
               '<span>' + stavka.kolicina + '</span>' +
-              '<button class="qty-inc" data-i="' + indeks + '">+</button>' +
+              '<button class="qty-inc" data-i="' + indeks + '"' + (dostigMaksimum ? ' disabled style="opacity:.35;cursor:not-allowed;"' : '') + '>+</button>' +
             '</div>' +
+            (dostigMaksimum ? '<div style="font-size:11.5px;color:var(--ink-soft);margin-top:6px;">Dostupno na stanju: ' + preostaloNaStanju + '</div>' : '') +
           '</div>' +
           '<div class="cart-item__right">' +
             '<div class="cart-item__price">' + formatCena(cena) + '</div>' +
