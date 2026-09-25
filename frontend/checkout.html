@@ -196,7 +196,7 @@ ucitajProizvode(function(){
     submitBtn.textContent = 'Slanje u toku...';
     errorEl.style.display = 'none';
 
-    fetch(SCRIPT_URL, {
+    fetch(SCRIPT_URL + '?_=' + Date.now(), {
       method: 'POST',
       body: JSON.stringify(podaci),
     })

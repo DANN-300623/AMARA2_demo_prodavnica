@@ -43,22 +43,8 @@ function primeniPodatke(proizvodi) {
   PRODAVNICA_DATA.proizvodi = proizvodi;
 }
 
-function ucitajProizvode(callback) {
-  if (proizvodiUcitani) { callback(); return; }
-
-  // PRVO probaj iz kesa — ako postoji i nije istekao, ne zovi server uopste
-  const izKesa = ucitajIzKesa();
-  if (izKesa) {
-    primeniPodatke(izKesa);
-    proizvodiUcitani = true;
-    callback();
-    return;
-  }
-
-  proizvodiCekanje.push(callback);
-  if (proizvodiCekanje.length > 1) return; // vec je u toku ucitavanje
-
-  fetch(PRODAVNICA_SCRIPT_URL + '?action=getShopData')
+function pozoviServer(pokusaj) {
+  fetch(PRODAVNICA_SCRIPT_URL + '?action=getShopData&_=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(rez) {
       if (rez.uspesno) {
@@ -78,6 +64,30 @@ function ucitajProizvode(callback) {
       proizvodiCekanje.forEach(function(cb) { cb(); });
       proizvodiCekanje = [];
     }).catch(function() {
-      document.body.innerHTML = '<div style="padding:80px 24px;text-align:center;font-family:sans-serif;">Greška pri učitavanju prodavnice. Osvežite stranicu.</div>';
+      // prvi i drugi neuspeh - tiho probaj ponovo, cesto je samo
+      // prolazna spora/hladna veza, ne stvaran kvar
+      if (pokusaj < 3) {
+        setTimeout(function() { pozoviServer(pokusaj + 1); }, 1500);
+      } else {
+        document.body.innerHTML = '<div style="padding:80px 24px;text-align:center;font-family:sans-serif;">Greška pri učitavanju prodavnice. Osvežite stranicu.</div>';
+      }
     });
+}
+
+function ucitajProizvode(callback) {
+  if (proizvodiUcitani) { callback(); return; }
+
+  // PRVO probaj iz kesa — ako postoji i nije istekao, ne zovi server uopste
+  const izKesa = ucitajIzKesa();
+  if (izKesa) {
+    primeniPodatke(izKesa);
+    proizvodiUcitani = true;
+    callback();
+    return;
+  }
+
+  proizvodiCekanje.push(callback);
+  if (proizvodiCekanje.length > 1) return; // vec je u toku ucitavanje
+
+  pozoviServer(1);
 }
