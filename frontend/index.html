@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTIK — Prodavnica</title>
+<title>AMARA — Prodavnica</title>
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
@@ -12,9 +12,9 @@
   <div class="container header-inner">
     <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
     <nav class="header-nav">
-      <a href="index.html?pol=zensko">Žensko</a>
-      <a href="index.html?pol=musko">Muško</a>
-      <a href="index.html">Sve</a>
+      <a href="proizvodi.html?pol=zensko">Žensko</a>
+      <a href="proizvodi.html?pol=musko">Muško</a>
+      <a href="proizvodi.html">Sve</a>
     </nav>
     <div class="header-actions">
       <a href="korpa.html" class="cart-link">
@@ -33,72 +33,41 @@
   </div>
 </section>
 
-<div class="container">
-  <div class="shop-layout">
-
-    <button class="filter-toggle-mobile" id="filterToggleBtn">Filteri</button>
-
-    <aside class="filters" id="filtersPanel">
-      <button class="filters-close" id="filtersCloseBtn">← Nazad</button>
-
-      <div class="filter-group">
-        <h3>Pol</h3>
-        <label class="filter-option"><input type="radio" name="pol" value="sve" checked> Sve</label>
-        <label class="filter-option"><input type="radio" name="pol" value="zensko"> Žensko</label>
-        <label class="filter-option"><input type="radio" name="pol" value="musko"> Muško</label>
-      </div>
-
-      <div class="filter-group">
-        <h3>Kategorija</h3>
-        <div id="kategorijaFilters"></div>
-      </div>
-
-      <div class="filter-group">
-        <h3>Boja</h3>
-        <div class="color-swatches" id="colorFilters"></div>
-      </div>
-
-      <div class="filter-group">
-        <h3>Veličina</h3>
-        <div id="velicinaFilters"></div>
-      </div>
-
-      <div class="filter-group">
-        <h3>Cena</h3>
-        <div class="price-range">
-          <input type="range" id="priceRange" min="1500" max="9800" value="9800" step="100">
-          <div class="price-range-values">
-            <span>od 1.500 RSD</span>
-            <span id="priceRangeMax">do 9.800 RSD</span>
-          </div>
-        </div>
-      </div>
-
-      <button class="clear-filters" id="clearFiltersBtn">Poništi filtere</button>
-    </aside>
-
-    <main>
-      <div class="shop-toolbar">
-        <span class="results-count" id="resultsCount">Učitavamo proizvode...</span>
-        <select class="sort-select" id="sortSelect">
-          <option value="novo">Novo prvo</option>
-          <option value="cena-rastuce">Cena — rastuće</option>
-          <option value="cena-opadajuce">Cena — opadajuće</option>
-        </select>
-      </div>
-
-      <div class="product-grid" id="productGrid">
-        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
-        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
-        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
-        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
-        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
-        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
-      </div>
-    </main>
-
+<section class="onama-section">
+  <div class="container onama-inner">
+    <p class="onama-kicker">O nama</p>
+    <p class="onama-tekst">AMARA je mali butik posvećen jednostavnim, nosivim komadima — biramo pažljivo, bez viška, za svakodnevno oblačenje koje traje.</p>
   </div>
-</div>
+</section>
+
+<section class="istaknuto-section">
+  <div class="container">
+    <div class="istaknuto-head">
+      <h2>Izdvajamo</h2>
+      <a href="proizvodi.html" class="istaknuto-link">Pogledajte celu kolekciju →</a>
+    </div>
+    <div class="istaknuto-grid">
+      <a href="proizvod.html?id=1" class="istaknuto-card">
+        <div class="istaknuto-card__img"><img src="https://images.pexels.com/photos/12928817/pexels-photo-12928817.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Midi haljina bez"></div>
+        <h3>Midi haljina bez</h3>
+        <p>5.600 RSD</p>
+      </a>
+      <a href="proizvod.html?id=6" class="istaknuto-card">
+        <div class="istaknuto-card__img"><img src="https://images.pexels.com/photos/5864266/pexels-photo-5864266.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Chino pantalone"></div>
+        <h3>Chino pantalone</h3>
+        <p>4.000 RSD</p>
+      </a>
+      <a href="proizvod.html?id=9" class="istaknuto-card">
+        <div class="istaknuto-card__img"><img src="https://images.pexels.com/photos/6593778/pexels-photo-6593778.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Polo majica"></div>
+        <h3>Polo majica</h3>
+        <p>3.100 RSD</p>
+      </a>
+    </div>
+    <div class="istaknuto-cta-wrap">
+      <a href="proizvodi.html" class="istaknuto-cta">Pogledajte celu kolekciju →</a>
+    </div>
+  </div>
+</section>
 
 <footer class="site-footer">
   AMARA<span class="demo-tag">DEMO</span> — demo prodavnica, DANN.web.workshop
@@ -106,8 +75,5 @@
 
 <script src="podaci.js"></script>
 <script src="korpa.js"></script>
-<script src="prodavnica-api.js"></script>
-<script src="prodavnica.js"></script>
-<script>ucitajProizvode(pokreniProdavnicu);</script>
 </body>
 </html>

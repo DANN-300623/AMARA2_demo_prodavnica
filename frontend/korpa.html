@@ -53,9 +53,9 @@
   <div class="container header-inner">
     <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
     <nav class="header-nav">
-      <a href="index.html?pol=zensko">Žensko</a>
-      <a href="index.html?pol=musko">Muško</a>
-      <a href="index.html">Sve</a>
+      <a href="proizvodi.html?pol=zensko">Žensko</a>
+      <a href="proizvodi.html?pol=musko">Muško</a>
+      <a href="proizvodi.html">Sve</a>
     </nav>
     <div class="header-actions">
       <a href="korpa.html" class="cart-link active">Korpa <span class="cart-count" id="cartCount">0</span></a>
@@ -83,7 +83,7 @@ ucitajProizvode(function(){
     const content = document.getElementById('cartContent');
 
     if (korpa.length === 0) {
-      content.innerHTML = '<div class="empty-cart"><h2>Korpa je prazna</h2><p>Pogledajte <a href="index.html">celu ponudu →</a></p></div>';
+      content.innerHTML = '<div class="empty-cart"><h2>Korpa je prazna</h2><p>Pogledajte <a href="proizvodi.html">celu ponudu →</a></p></div>';
       return;
     }
 

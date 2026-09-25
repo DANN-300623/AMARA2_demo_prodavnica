@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proizvodi — AMARA</title>
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
+    <nav class="header-nav">
+      <a href="proizvodi.html?pol=zensko">Žensko</a>
+      <a href="proizvodi.html?pol=musko">Muško</a>
+      <a href="proizvodi.html" class="active">Sve</a>
+    </nav>
+    <div class="header-actions">
+      <a href="korpa.html" class="cart-link">
+        Korpa <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="shop-layout">
+
+    <button class="filter-toggle-mobile" id="filterToggleBtn">Filteri</button>
+
+    <aside class="filters" id="filtersPanel">
+      <button class="filters-close" id="filtersCloseBtn">← Nazad</button>
+
+      <div class="filter-group">
+        <h3>Pol</h3>
+        <label class="filter-option"><input type="radio" name="pol" value="sve" checked> Sve</label>
+        <label class="filter-option"><input type="radio" name="pol" value="zensko"> Žensko</label>
+        <label class="filter-option"><input type="radio" name="pol" value="musko"> Muško</label>
+      </div>
+
+      <div class="filter-group">
+        <h3>Kategorija</h3>
+        <div id="kategorijaFilters"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Boja</h3>
+        <div class="color-swatches" id="colorFilters"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Veličina</h3>
+        <div id="velicinaFilters"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Cena</h3>
+        <div class="price-range">
+          <input type="range" id="priceRange" min="1500" max="9800" value="9800" step="100">
+          <div class="price-range-values">
+            <span>od 1.500 RSD</span>
+            <span id="priceRangeMax">do 9.800 RSD</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="clear-filters" id="clearFiltersBtn">Poništi filtere</button>
+    </aside>
+
+    <main>
+      <div class="shop-toolbar">
+        <span class="results-count" id="resultsCount">Učitavamo proizvode...</span>
+        <select class="sort-select" id="sortSelect">
+          <option value="novo">Novo prvo</option>
+          <option value="cena-rastuce">Cena — rastuće</option>
+          <option value="cena-opadajuce">Cena — opadajuće</option>
+        </select>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
+        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
+        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
+        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
+        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
+        <div class="skeleton-card"><div class="skeleton-photo"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--price"></div></div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  AMARA<span class="demo-tag">DEMO</span> — demo prodavnica, DANN.web.workshop
+</footer>
+
+<script src="podaci.js"></script>
+<script src="korpa.js"></script>
+<script src="prodavnica-api.js"></script>
+<script src="prodavnica.js"></script>
+<script>ucitajProizvode(pokreniProdavnicu);</script>
+</body>
+</html>

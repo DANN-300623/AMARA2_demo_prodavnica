@@ -53,8 +53,8 @@
   <div class="container header-inner">
     <a href="index.html" class="logo">AMARA<span class="demo-tag">DEMO</span></a>
     <nav class="header-nav">
-      <a href="index.html?pol=zensko">Žensko</a>
-      <a href="index.html?pol=musko">Muško</a>
+      <a href="proizvodi.html?pol=zensko">Žensko</a>
+      <a href="proizvodi.html?pol=musko">Muško</a>
       <a href="index.html">Sve</a>
     </nav>
     <div class="header-actions">
@@ -156,6 +156,21 @@ ucitajProizvode(function(){
   }
   const ukupnoIznos = renderSummary();
 
+  // srpske poruke za validaciju, umesto podrazumevanih engleskih iz browsera
+  function postaviSrpskuValidaciju(id, porukaPrazno, porukaTip){
+    const el = document.getElementById(id);
+    el.addEventListener('invalid', function(){
+      if (el.validity.valueMissing) el.setCustomValidity(porukaPrazno);
+      else if (el.validity.typeMismatch) el.setCustomValidity(porukaTip || porukaPrazno);
+      else el.setCustomValidity('');
+    });
+    el.addEventListener('input', function(){ el.setCustomValidity(''); });
+    el.addEventListener('change', function(){ el.setCustomValidity(''); });
+  }
+  postaviSrpskuValidaciju('ime', 'Molimo unesite ime i prezime.');
+  postaviSrpskuValidaciju('email', 'Molimo unesite email adresu.', 'Unesite ispravnu email adresu (npr. ime@primer.rs).');
+  postaviSrpskuValidaciju('privacyConsent', 'Molimo prihvatite Politiku privatnosti da biste nastavili.');
+
   document.getElementById('checkoutForm').addEventListener('submit', function(e){
     e.preventDefault();
     const submitBtn = document.getElementById('submitBtn');
@@ -207,7 +222,7 @@ ucitajProizvode(function(){
         window.location.href = 'uspesno.html?broj=' + encodeURIComponent(data.brojPorudzbine);
       } else {
         errorEl.innerHTML = (data.poruka || 'Došlo je do greške. Pokušajte ponovo.') +
-          '<br><br>Proverite Vaš mejl (uklju čujuci Spam/Promotions folder) — ukoliko Vam JE stiglo obaveštenje o porudžbini, porudžbina je prošla i NE morate ponovo da je šaljete. Ukoliko obaveštenje nije stiglo, pokušajte ponovo ili nas kontaktirajte telefonom.';
+          '<br><br>Proverite Vaš mejl (uključujući Spam/Promotions folder) — ukoliko Vam JE stiglo obaveštenje o porudžbini, porudžbina je prošla i NE morate ponovo da je šaljete. Ukoliko obaveštenje nije stiglo, pokušajte ponovo ili nas kontaktirajte telefonom.';
         errorEl.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.textContent = 'Pošalji porudžbinu';
@@ -215,7 +230,7 @@ ucitajProizvode(function(){
     })
     .catch(function(){
       errorEl.innerHTML = 'Došlo je do greške pri prikazu potvrde, ali porudžbina je moguće ipak prošla.' +
-        '<br><br><strong>Pre nego što pokušate ponovo — proverite Vaš mejl</strong> (uklju čujuci Spam/Promotions folder). Ako je stigla potvrda porudžbine, NEMOJTE ponovo slati istu porudžbinu. Ako ništa nije stiglo u roku od par minuta, slobodno pokušajte ponovo ili nas kontaktirajte telefonom.';
+        '<br><br><strong>Pre nego što pokušate ponovo — proverite Vaš mejl</strong> (uključujući Spam/Promotions folder). Ako je stigla potvrda porudžbine, NEMOJTE ponovo slati istu porudžbinu. Ako ništa nije stiglo u roku od par minuta, slobodno pokušajte ponovo ili nas kontaktirajte telefonom.';
       errorEl.style.display = 'block';
       submitBtn.disabled = false;
       submitBtn.textContent = 'Pošalji porudžbinu';
