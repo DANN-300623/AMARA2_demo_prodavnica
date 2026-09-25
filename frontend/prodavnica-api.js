@@ -44,7 +44,7 @@ function primeniPodatke(proizvodi) {
 }
 
 function pozoviServer(pokusaj) {
-  fetch(PRODAVNICA_SCRIPT_URL + '?action=getShopData&_=' + Date.now())
+  fetch(PRODAVNICA_SCRIPT_URL + '?action=getShopData')
     .then(function(r){ return r.json(); })
     .then(function(rez) {
       if (rez.uspesno) {
