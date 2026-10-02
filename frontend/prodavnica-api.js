@@ -19,6 +19,9 @@ const PRODAVNICA_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYCrTmIY
 
 const KES_KLJUC = 'amara_prodavnica_kes';
 
+let proizvodiUcitani = false;
+let proizvodiCekanje = [];
+
 function ucitajIzKesa() {
   try {
     const sacuvano = localStorage.getItem(KES_KLJUC);
