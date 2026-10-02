@@ -3,7 +3,7 @@
    =========================================================== */
 
 // ISTI URL kao na checkout.html, popuni posle deploy-a
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaTP5RsIOIQ8Lxn03Uxp5THuhU1t00f3htuKijAG0gpVIkMJXel_qhj8R228_Ou8Mt9w/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYCrTmIYjc7BthqCtNnIg0G_SP0EsEqLFqz8MC6lW6cRq0pW_WqRHpRBH_pekB5oW45Q/exec';
 
 function getLozinku(){
   return sessionStorage.getItem('amara_admin_lozinka');
